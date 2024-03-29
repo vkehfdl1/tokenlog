@@ -1,10 +1,9 @@
 import uuid
 from typing import Optional, List
-from dataclasses import dataclass, field
 
-from datetime import datetime
 import tiktoken.model
 
+from tokenlog.history import History
 from tokenlog.tokenizer import TiktokenTokenizer, HuggingfaceTokenizer
 
 GPT_MODEL_NAMES = tiktoken.model.MODEL_TO_ENCODING.keys()
@@ -18,7 +17,7 @@ def get_tokenizer(model_name: str):
 
 
 def getLogger(name: str, model_name: Optional[str] = None):
-    if not name or isinstance(name, str):
+    if not name or not isinstance(name, str):
         raise ValueError('name must be a string')
     return TokenLogger(name, model_name)
 
@@ -68,19 +67,9 @@ class TokenLogger(metaclass=SingletonMeta):
         history = self.__record_token_usage(text)
         return history.id
 
-    def answer(self, text: str, query_id: uuid.uuid4):
+    def answer(self, text: str, query_id: uuid.UUID):
         history = self.__record_token_usage(text)
         query_history = self.__find_history(query_id)
         if query_history is None:
             raise ValueError(f'query_id not found. Your input query_id is {query_id}')
         query_history.answer.append(history)
-
-
-@dataclass
-class History:
-    token_length: int
-    id: uuid.uuid4 = field(default_factory=uuid.uuid4)
-    text: Optional[str] = None
-    tokens: Optional[List[int]] = None
-    answer: List['History'] = field(default_factory=list)
-    datetime: datetime = field(default_factory=datetime.now)
