@@ -47,7 +47,17 @@ def getLogger(name: str, model_name: Optional[str] = None):
     return TokenLogger(name, model_name)
 
 
-class TokenLogger:
+class SingletonMeta(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        name = kwargs.get('name', None) if kwargs else args[0]  # Assuming 'name' is the first argument
+        if name not in cls._instances:
+            cls._instances[name] = super(SingletonMeta, cls).__call__(*args, **kwargs)
+        return cls._instances[name]
+
+
+class TokenLogger(metaclass=SingletonMeta):
     def __init__(self, name: str, model: str):
         self.name = name
         self.tokenizer = get_tokenizer(model)
