@@ -7,31 +7,7 @@ import tiktoken.model
 
 from tokenlog.tokenizer import TiktokenTokenizer, HuggingfaceTokenizer
 
-CRITICAL = 50
-FATAL = CRITICAL
-ERROR = 40
-WARNING = 30
-WARN = WARNING
-INFO = 20
-DEBUG = 10
-NOTSET = 0
-
-_nameToLevel = {
-    'CRITICAL': CRITICAL,
-    'FATAL': FATAL,
-    'ERROR': ERROR,
-    'WARN': WARNING,
-    'WARNING': WARNING,
-    'INFO': INFO,
-    'DEBUG': DEBUG,
-    'NOTSET': NOTSET,
-}
-
 GPT_MODEL_NAMES = tiktoken.model.MODEL_TO_ENCODING.keys()
-
-import logging
-
-logging.getLogger()
 
 
 def get_tokenizer(model_name: str):
