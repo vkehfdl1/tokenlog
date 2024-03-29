@@ -5,11 +5,13 @@ test_texts = [test_text] * 3
 
 
 def base_test_tokenizer(tokenizer):
-    token_length = tokenizer.count_tokens(test_text)
+    token = tokenizer.get_tokens(test_text)
+    token_length = len(token)
     assert isinstance(token_length, int)
     assert token_length > 0
 
-    token_lengths = tokenizer.count_tokens_batch(test_texts)
+    tokens = tokenizer.get_tokens_batch(test_texts)
+    token_lengths = list(map(len, tokens))
     assert isinstance(token_lengths, list)
     assert len(token_lengths) == len(test_texts)
     assert all(isinstance(length, int) for length in token_lengths)
