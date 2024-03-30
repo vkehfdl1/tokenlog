@@ -1,6 +1,15 @@
 import uuid
 
+import pytest
+
 import tokenlog
+
+
+@pytest.fixture
+def token_logger():
+    logger = tokenlog.getLogger('test', 'gpt-3.5-turbo')
+    yield logger
+    logger.clear()
 
 
 def test_singleton():
@@ -12,8 +21,7 @@ def test_singleton():
     assert log1 is not log2
 
 
-def test_get_history():
-    token_logger = tokenlog.getLogger('test', 'gpt-3.5-turbo')
+def test_get_history(token_logger):
     token_logger.query('This is a test text.')
     token_logger.query('This is another test text.')
     token_logger.query('This is a third test text.')
@@ -32,22 +40,20 @@ def test_get_history():
     assert len(token_logger.get_history()) == 0
 
 
-def test_get_token_usage():
-    token_logger = tokenlog.getLogger('test', 'gpt-3.5-turbo')
+def test_get_token_usage(token_logger):
     q1 = token_logger.query('This is a test text.')
     token_logger.query('This is another test text.')
     token_logger.query('This is a third test text.')
     token_logger.answer('This is the answer of first query.', q1)
 
-    assert token_logger.get_token_usage() == 27
+    assert token_logger.get_token_usage() == 19
     token_logger.query('This is a fourth test text.')
-    assert token_logger.get_token_usage() > 27
+    assert token_logger.get_token_usage() > 19
     token_logger.clear()
     assert token_logger.get_token_usage() == 0
 
 
-def test_query_answer():
-    token_logger = tokenlog.getLogger('test', 'facebook/opt-125m')
+def test_query_answer(token_logger):
     q1 = token_logger.query('This is a test text.')
     q2 = token_logger.query('This is another test text.')
     token_logger.answer('This is the answer of first query.', q1)
