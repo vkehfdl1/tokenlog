@@ -54,7 +54,6 @@ class TokenLogger(metaclass=SingletonMeta):
             text=text,
             tokens=tokens
         )
-        self.history.append(history)
         return history
 
     def __find_history(self, _id: uuid.uuid4):
@@ -65,6 +64,7 @@ class TokenLogger(metaclass=SingletonMeta):
 
     def query(self, text: str):
         history = self.__record_token_usage(text)
+        self.history.append(history)
         return history.id
 
     def answer(self, text: str, query_id: uuid.UUID):
