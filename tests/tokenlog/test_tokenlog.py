@@ -69,3 +69,18 @@ def test_query_answer(token_logger):
     assert len(histories[0].answer) == 2
     assert len(histories[1].answer) == 1
     assert len(histories[2].answer) == 0
+
+
+def test_query_batch(token_logger):
+    q_ids = token_logger.query_batch(['This is a test text.',
+                                      'This is another test text.',
+                                      'This is a third test text.'])
+    token_logger.answer_batch(['This is the answer of first query.',
+                               'This is the answer of second query.',
+                               'Thius is the answer of first query 2.'], [q_ids[0], q_ids[1], q_ids[0]])
+    assert len(q_ids) == 3
+    histories = token_logger.get_history()
+    assert len(histories) == 3
+    assert len(histories[0].answer) == 2
+    assert len(histories[1].answer) == 1
+    assert len(histories[2].answer) == 0

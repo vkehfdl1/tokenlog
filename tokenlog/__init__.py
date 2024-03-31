@@ -56,6 +56,15 @@ class TokenLogger(metaclass=SingletonMeta):
         )
         return history
 
+    def __record_token_usage_batch(self, texts: List[str]):
+        tokens = self.tokenizer.get_tokens_batch(texts)
+        histories = list(map(lambda t: History(
+            token_length=len(t[0]),
+            text=t[1],
+            tokens=t[0],
+        ), zip(tokens, texts)))
+        return histories
+
     def __find_history(self, _id: uuid.uuid4):
         for i in range(len(self.history) - 1, -1, -1):
             if self.history[i].id == _id:
@@ -67,9 +76,22 @@ class TokenLogger(metaclass=SingletonMeta):
         self.history.append(history)
         return history.id
 
+    def query_batch(self, texts: List[str]) -> List[str]:
+        histories = self.__record_token_usage_batch(texts)
+        self.history.extend(histories)
+        return list(map(lambda h: h.id, histories))
+
     def answer(self, text: str, query_id: uuid.UUID):
         history = self.__record_token_usage(text)
         query_history = self.__find_history(query_id)
         if query_history is None:
             raise ValueError(f'query_id not found. Your input query_id is {query_id}')
         query_history.answer.append(history)
+
+    def answer_batch(self, texts: List[str], query_ids: List[uuid.UUID]):
+        histories = self.__record_token_usage_batch(texts)
+        for i in range(len(query_ids)):
+            query_history = self.__find_history(query_ids[i])
+            if query_history is None:
+                raise ValueError(f'query_id not found. Your input query_id is {query_ids[i]}')
+            query_history.answer.append(histories[i])
