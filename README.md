@@ -29,6 +29,18 @@ t_logger.get_history() # get history of token usage
 t_logger.clear() # clear all histories
 ```
 
+### Batch logging
+
+You can log multiple queries and answers at once.
+
+```python
+import tokenlog
+
+t_logger = tokenlog.getLogger('session_2', 'gpt-3.5-turbo') # write logger name and model name that you are using
+query_ids = t_logger.query_batch(['This is the query that you used in LLM', 'This is the second query'])
+t_logger.query(['This is the first answer', 'This is the second answer'], query_ids)
+```
+
 
 ## Support Models
 
