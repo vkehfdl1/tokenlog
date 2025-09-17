@@ -1,4 +1,0 @@
--e .
-pytest
-pytest-env
-pytest-xdist

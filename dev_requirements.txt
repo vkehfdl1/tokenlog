@@ -1,3 +1,0 @@
-twine
-build
-setuptools-scm

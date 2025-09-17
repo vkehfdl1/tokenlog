@@ -1,34 +1,56 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "tokenlog"
-authors = [
-    { name = "vkehfdl1", email = "vkehfdl1@gmail.com" }
-]
-description = 'Simplest token log system for your LLM, embedding model calls.'
-readme = "README.md"
+version = "0.0.2"
+description = "Simplest token log system for your LLM, embedding model calls."
+authors = [{ name = "vkehfdl1", email = "vkehfdl1@gmail.com" }]
 requires-python = ">=3.8"
-keywords = ['LLM', 'logging', 'log', 'embedding', 'OpenAI', 'Huggingface', 'Token']
+readme = "README.md"
 license = { file = "LICENSE" }
+keywords = [
+    "LLM",
+    "logging",
+    "log",
+    "embedding",
+    "OpenAI",
+    "Huggingface",
+    "Token",
+]
 classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-urls = { Homepage = "https://github.com/vkehfdl1/tokenlog" }
-dynamic = ["version", "dependencies"]
+dependencies = [
+    "tiktoken",
+    "transformers",
+]
 
-[tool.setuptools.dynamic]
-version = { file = ["tokenlog/VERSION"] }
-dependencies = { file = ["requirements.txt"] }
+[project.urls]
+Homepage = "https://github.com/vkehfdl1/tokenlog"
+
+[dependency-groups]
+dev = [
+    "twine",
+    "build",
+    "setuptools-scm",
+    "pytest>=7.2.0",
+    "pytest-env",
+    "pytest-xdist",
+    "pytest-asyncio",
+]
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = false
 
 [tool.setuptools]
 include-package-data = true
