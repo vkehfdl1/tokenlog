@@ -4,7 +4,7 @@ from typing import Optional, List
 import tiktoken.model
 
 from tokenlog.history import History
-from tokenlog.tokenizer import TiktokenTokenizer, HuggingfaceTokenizer
+from tokenlog.tokenizer import TiktokenTokenizer, HuggingfaceTokenizer, Prompt
 
 GPT_MODEL_NAMES = tiktoken.model.MODEL_TO_ENCODING.keys()
 
@@ -47,7 +47,7 @@ class TokenLogger(metaclass=SingletonMeta):
     def clear(self):
         self.history = []
 
-    def __record_token_usage(self, text: str):
+    def __record_token_usage(self, text: Prompt):
         tokens = self.tokenizer.get_tokens(text)
         history = History(
             token_length=len(tokens),
@@ -56,7 +56,7 @@ class TokenLogger(metaclass=SingletonMeta):
         )
         return history
 
-    def __record_token_usage_batch(self, texts: List[str]):
+    def __record_token_usage_batch(self, texts: List[Prompt]):
         tokens = self.tokenizer.get_tokens_batch(texts)
         histories = list(map(lambda t: History(
             token_length=len(t[0]),
@@ -71,24 +71,24 @@ class TokenLogger(metaclass=SingletonMeta):
                 return self.history[i]
         return None
 
-    def query(self, text: str):
+    def query(self, text: Prompt):
         history = self.__record_token_usage(text)
         self.history.append(history)
         return history.id
 
-    def query_batch(self, texts: List[str]) -> List[str]:
+    def query_batch(self, texts: List[Prompt]) -> List[str]:
         histories = self.__record_token_usage_batch(texts)
         self.history.extend(histories)
         return list(map(lambda h: h.id, histories))
 
-    def answer(self, text: str, query_id: uuid.UUID):
+    def answer(self, text: Prompt, query_id: uuid.UUID):
         history = self.__record_token_usage(text)
         query_history = self.__find_history(query_id)
         if query_history is None:
             raise ValueError(f'query_id not found. Your input query_id is {query_id}')
         query_history.answer.append(history)
 
-    def answer_batch(self, texts: List[str], query_ids: List[uuid.UUID]):
+    def answer_batch(self, texts: List[Prompt], query_ids: List[uuid.UUID]):
         histories = self.__record_token_usage_batch(texts)
         for i in range(len(query_ids)):
             query_history = self.__find_history(query_ids[i])
