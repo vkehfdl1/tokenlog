@@ -57,9 +57,15 @@ def test_query_answer(token_logger):
     q1 = token_logger.query('This is a test text.')
     q2 = token_logger.query('This is another test text.')
     token_logger.answer('This is the answer of first query.', q1)
-    q3 = token_logger.query('This is a third test text.')
+    q3 = token_logger.query([
+        {"role": "system", "content": "You are a helpful assistant"},
+        {"role": "user", "content": "Hello, how are you?"},
+    ])
     token_logger.answer('This is the second answer of first query.', q1)
     token_logger.answer('This is the answer of second query.', q2)
+    token_logger.answer([
+        {"role": "assistant", "content": "I'm doing great. How can I help you today?"},
+    ], q3)
     assert q2 != q1
     assert isinstance(q2, uuid.UUID)
     assert isinstance(q1, uuid.UUID)
@@ -68,7 +74,7 @@ def test_query_answer(token_logger):
     assert len(histories) == 3
     assert len(histories[0].answer) == 2
     assert len(histories[1].answer) == 1
-    assert len(histories[2].answer) == 0
+    assert len(histories[2].answer) == 1
 
 
 def test_query_batch(token_logger):
