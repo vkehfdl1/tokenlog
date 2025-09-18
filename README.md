@@ -41,6 +41,25 @@ query_ids = t_logger.query_batch(['This is the query that you used in LLM', 'Thi
 t_logger.query(['This is the first answer', 'This is the second answer'], query_ids)
 ```
 
+### Chat Support
+
+We also support chat format logging.
+You can use the OpenAI type chat format.
+
+```python
+import tokenlog
+
+t_logger = tokenlog.getLogger('session_3', 'gpt-5')
+chat1 = t_logger.query([
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Who won the world series in 2020?"},
+])
+t_logger.chat([
+    {"role": "assistant", "content": "The 2020 World Series was played at Globe Life Field in Arlington, Texas."}
+], chat1)
+
+```
+
 
 ## Support Models
 
@@ -56,4 +75,3 @@ This library used in [AutoRAG](https://github.com/Marker-Inc-Korea/AutoRAG) proj
 
 - [ ] Add Handlers for exporting logs
 - [ ] Support more models
-- [ ] Batch logging
